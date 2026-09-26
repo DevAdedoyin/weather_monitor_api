@@ -8,6 +8,8 @@ from geopy.geocoders import Nominatim
 import time
 from openai import OpenAI
 
+from constants.system_prompt_constants import SystemPrompt
+
 
 
 class LocationSearchTool:
@@ -84,7 +86,7 @@ class LocationSearchTool:
                 },
                 {
                     "role": "system",
-                    "content": "You are an expert weather assistant. If the user asks about the weather, provide a detailed response. If they ask about something else, respond with 'I can only provide weather information.'",
+                    "content": SystemPrompt.get_system_prompt(),
                 },
             ]
 
