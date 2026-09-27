@@ -17,7 +17,7 @@ class CurrentLocationWeatherTool:
                 "properties": {
                     "location": {
                         "type": "string",
-                        "description": "The name or coordinates of the user's current location to search for weather information.",
+                        "description": "The coordinates or name of the user's current location to search for weather information.",
                     }
                 },
                 "required": ["current_location"],
@@ -28,12 +28,10 @@ class CurrentLocationWeatherTool:
 
     def get_current_location_weather(latlon: dict[str, float]) -> dict[str, str | float | None]:
         load_dotenv()
-
-
         url = "https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={api_key}"
 
 
-    def current_location_weather_chat(user_prompt: str) -> str:
+    async def current_location_weather_chat(user_prompt: str) -> str:
         """Search for weather information based on the user's current location."""
         openai_client = OpenAILoader.openai_loader()
 
@@ -62,7 +60,7 @@ class CurrentLocationWeatherTool:
 
             location = json.loads(tool_call.function.arguments)["location"]
 
-            open_weather_response = LocationSearchWeatherTool.search_weather_for_location(location)
+            open_weather_response = CurrentLocationWeatherTool.get_current_location_weather(location)
             messages.append({
                 "role": "assistant",
                 "content": json.dumps(open_weather_response)

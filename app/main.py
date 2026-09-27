@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from IPython.display import Markdown, display
 
-from tools.weather.location_search import LocationSearchWeatherTool
+from tools.weather.location_search.chat_response import SearchLocationWeatherChat
 
 
 
@@ -17,7 +17,7 @@ app = FastAPI()
 
 @app.get("/api/prompt")
 async def get_user_prompt(user_prompt: str):
-    response = await LocationSearchWeatherTool.search_location_weather_chat(
+    response = await SearchLocationWeatherChat.search_location_weather_chat(
         user_prompt
     )
 

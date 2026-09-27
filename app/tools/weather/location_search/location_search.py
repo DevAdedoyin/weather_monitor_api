@@ -3,15 +3,11 @@ import os
 from urllib.parse import urlencode
 from urllib.request import urlopen
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from geopy.geocoders import Nominatim
 import time
 from openai import OpenAI
 
-from app.helpers.openai_loader import OpenAILoader
-from app.helpers.tools_selector import ToolSelector
-from helpers.model import ModelConst
-from constants.system_prompt_constants import SystemPrompt
+
 
 
 
@@ -52,17 +48,15 @@ class LocationSearchWeatherTool:
             raise RuntimeError("OPENWEATHER_API_KEY is not configured")
 
         # instantiate a new Nominatim client
-        app = Nominatim(user_agent="weather_monitor_api")
+        app = Nominatim(user_agent="weather_monitor_api", timeout=10)
 
-        # Geocoding API to get coordinates
+        location_data = app.geocode(location)
 
+        if location_data is None:
+            raise LookupError(f"Could not find location: {location}")
 
-        time.sleep(1)
-
-        location = app.geocode(location).raw
-
-        lat = location["lat"]
-        lon = location["lon"]
+        lat = location_data.latitude
+        lon = location_data.longitude
 
         # Weather API to get weather information
         url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={api_key}"
@@ -75,37 +69,5 @@ class LocationSearchWeatherTool:
         return results
 
 
-    # Function to search for weather information based on a location name using OpenAI's chat model
-    async def search_location_weather_chat(user_prompt :str):
-        openai_client = OpenAILoader.openai_loader()
-
-        tools = [{"type": "function", "function": LocationSearchWeatherTool.location_search_tool()}]
-        messages = [
-                {
-                    "role": "user",
-                    "content": user_prompt,
-                },
-                {
-                    "role": "system",
-                    "content": SystemPrompt.get_system_prompt(),
-                },
-            ]
-
-        openai_response = openai_client.chat.completions.create(
-            model=ModelConst.model(),
-            messages=messages,
-            tools=tools,
-            #    reasoning_effort= "medium",
-        )
-
-        if openai_response.choices[0].finish_reason=="tool_calls":
-            message = openai_response.choices[0].message
-
-            tool_call_response = ToolSelector.get_tool(message)
-            messages.append(message)
-            message.extend(tool_call_response)
-            response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
-
-            return response.choices[0].message.content
 
 
