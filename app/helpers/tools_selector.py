@@ -3,7 +3,7 @@
 
 import json
 
-from tools.weather.current_location import CurrentLocationWeatherTool
+from tools.weather.current_location.current_location import CurrentLocationWeatherTool
 from tools.weather.location_search.location_search import LocationSearchWeatherTool
 
 
@@ -14,6 +14,7 @@ class ToolSelector:
     async def get_tool(message):
         responses = []
         """Select the appropriate tool based on the message content."""
+        print(f"ToolSelector: Received message: {message}")
         for tool_call in message.tool_calls:
             tool_name = tool_call.function.name
 
