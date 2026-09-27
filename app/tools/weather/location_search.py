@@ -8,13 +8,15 @@ from geopy.geocoders import Nominatim
 import time
 from openai import OpenAI
 
+from app.helpers.openai_loader import OpenAILoader
+from helpers.model import ModelConst
 from constants.system_prompt_constants import SystemPrompt
 
 
 
-class LocationSearchTool:
+class LocationSearchWeatherTool:
 
-    @staticmethod
+    # Function to define the tool for searching weather information based on a location name
     def location_search_tool():
         """Tool for searching weather information based on location."""
         return {
@@ -34,7 +36,7 @@ class LocationSearchTool:
         }
 
 
-    @staticmethod
+    # Function to search for weather information based on a location name
     def search_weather_for_location(location: str) -> dict[str, str | float | None]:
         """Resolve a place name to coordinates using OpenWeather geocoding."""
 
@@ -72,13 +74,11 @@ class LocationSearchTool:
         return results
 
 
-
+    # Function to search for weather information based on a location name using OpenAI's chat model
     async def search_location_weather_chat(user_prompt :str):
-        load_dotenv()
-        openai_api_key = os.getenv('OPENAI_API_KEY')
-        openai_client = OpenAI(api_key=openai_api_key)
+        openai_client = OpenAILoader.openai_loader()
 
-        tools = [{"type": "function", "function": LocationSearchTool.location_search_tool()}]
+        tools = [{"type": "function", "function": LocationSearchWeatherTool.location_search_tool()}]
         messages = [
                 {
                     "role": "user",
@@ -91,7 +91,7 @@ class LocationSearchTool:
             ]
 
         openai_response = openai_client.chat.completions.create(
-            model="gpt-4.1-mini",
+            model=ModelConst.model(),
             messages=messages,
             tools=tools,
             #    reasoning_effort= "medium",
@@ -103,12 +103,12 @@ class LocationSearchTool:
 
             location = json.loads(tool_call.function.arguments)["location"]
 
-            open_weather_response = LocationSearchTool.search_weather_for_location(location)
+            open_weather_response = LocationSearchWeatherTool.search_weather_for_location(location)
             messages.append({
                 "role": "assistant",
                 "content": json.dumps(open_weather_response)
             })
-            response = openai_client.chat.completions.create(model="gpt-4.1-mini", messages=messages)
+            response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
 
             return response.choices[0].message.content
 
