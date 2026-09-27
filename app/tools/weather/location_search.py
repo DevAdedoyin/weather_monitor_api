@@ -9,6 +9,7 @@ import time
 from openai import OpenAI
 
 from app.helpers.openai_loader import OpenAILoader
+from app.helpers.tools_selector import ToolSelector
 from helpers.model import ModelConst
 from constants.system_prompt_constants import SystemPrompt
 
@@ -99,15 +100,10 @@ class LocationSearchWeatherTool:
 
         if openai_response.choices[0].finish_reason=="tool_calls":
             message = openai_response.choices[0].message
-            tool_call = message.tool_calls[0]
 
-            location = json.loads(tool_call.function.arguments)["location"]
-
-            open_weather_response = LocationSearchWeatherTool.search_weather_for_location(location)
-            messages.append({
-                "role": "assistant",
-                "content": json.dumps(open_weather_response)
-            })
+            tool_call_response = ToolSelector.get_tool(message)
+            messages.append(message)
+            message.extend(tool_call_response)
             response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
 
             return response.choices[0].message.content
