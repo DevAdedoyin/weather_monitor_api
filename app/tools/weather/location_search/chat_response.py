@@ -1,6 +1,8 @@
 
 
 
+from tools.weather.generic_weather_query.generic_weather_query import GenericWeatherQuery
+from helpers.prompt_loader import PromptLoader
 from helpers.tools_selector import ToolSelector
 from tools.weather.location_search.location_search import LocationSearchWeatherTool
 from helpers.openai_loader import OpenAILoader
@@ -10,14 +12,17 @@ from constants.system_prompt_constants import SystemPrompt
 
 class SearchLocationWeatherChat:
     # Function to search for weather information based on a location name using OpenAI's chat model
-    async def search_location_weather_chat(user_prompt :str):
+    async def search_location_weather_chat(user_prompt :str, lat: float, lon: float, location: str, date: str):
         openai_client = OpenAILoader.openai_loader()
 
-        tools = [{"type": "function", "function": LocationSearchWeatherTool.location_search_tool()}]
+        tools = [
+            {"type": "function", "function": LocationSearchWeatherTool.location_search_tool()},
+            {"type": "function", "function": GenericWeatherQuery.generic_weather_query_tool()}
+        ]
         messages = [
                 {
                     "role": "user",
-                    "content": user_prompt,
+                    "content": PromptLoader.load_prompt(user_prompt, lat=lat, lon=lon, location=location, date=date),
                 },
                 {
                     "role": "system",
