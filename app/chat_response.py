@@ -10,9 +10,9 @@ from helpers.model import ModelConst
 from constants.system_prompt_constants import SystemPrompt
 
 
-class SearchLocationWeatherChat:
+class WeatherChat:
     # Function to search for weather information based on a location name using OpenAI's chat model
-    async def search_location_weather_chat(user_prompt :str, lat: float, lon: float, location: str, date: str):
+    async def weather_chatter(user_prompt :str, lat: float, lon: float, location: str, date: str):
         openai_client = OpenAILoader.openai_loader()
 
         tools = [
@@ -37,7 +37,7 @@ class SearchLocationWeatherChat:
             #    reasoning_effort= "medium",
         )
 
-        if openai_response.choices[0].finish_reason=="tool_calls":
+        if openai_response.choices[0].finish_reason == "tool_calls":
             message = openai_response.choices[0].message
 
             tool_call_response = await ToolSelector.get_tool(message)
@@ -46,3 +46,5 @@ class SearchLocationWeatherChat:
             response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
 
             return response.choices[0].message.content
+        else:
+            return openai_response.choices[0].message.content
