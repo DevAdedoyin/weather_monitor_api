@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from IPython.display import Markdown, display
 
-from tools.weather.location_search.chat_response import SearchLocationWeatherChat
+from app.chat_response import SearchLocationWeatherChat
 
 
 
