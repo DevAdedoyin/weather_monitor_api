@@ -11,7 +11,7 @@ from helpers.url_loader import URLLoader
 
 class LocationSearcher:
      # Function to search for weather information based on a location name
-        def search_weather_for_location(location: str, isHistory: bool, timestamp: int) -> dict[str, str | float | None]:
+        def search_weather_for_location(location: str, isHistory: bool, timestamp: int | None = None) -> dict[str, str | float | None]:
             """Resolve a place name to coordinates using OpenWeather geocoding."""
 
             load_dotenv()

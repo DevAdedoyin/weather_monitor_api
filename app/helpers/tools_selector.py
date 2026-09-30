@@ -3,8 +3,7 @@
 
 import json
 from helpers.location_searcher import LocationSearcher
-from tools.weather.generic_weather_query.generic_weather_query import GenericWeatherQuery
-from tools.weather.location_search.location_search import LocationSearchWeatherTool
+from datetime import datetime, timezone
 
 
 class ToolSelector:
@@ -33,6 +32,7 @@ class ToolSelector:
                 """This tool is used to search for weather information based on a location name."""
                 print(f"ToolSelector: Calling tool {tool_name} with arguments: {tool_call.function.arguments}")
                 location = json.loads(tool_call.function.arguments)["location"]
+                # timestamp: int = int(datetime.now(timezone.utc).timestamp())
                 open_weather_response = LocationSearcher.search_weather_for_location(location=location, isHistory=False)
                 responses.append({"role": "tool", "content": json.dumps(open_weather_response), "tool_call_id": tool_call.id})
 
