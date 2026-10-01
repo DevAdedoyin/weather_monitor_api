@@ -1,7 +1,13 @@
 
 
 
-class GenericWeatherQuery:
+import json
+from urllib.request import urlopen
+
+from helpers.url_loader import URLLoader
+
+
+class GenericWeatherQueryTool:
 
     @staticmethod
     # Function to define the tool for searching weather information based on a location name
@@ -22,3 +28,4 @@ class GenericWeatherQuery:
                 "additionalProperties": False
             },
         }
+

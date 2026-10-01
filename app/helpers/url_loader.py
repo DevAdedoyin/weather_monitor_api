@@ -1,10 +1,24 @@
 from datetime import datetime
+import os
 
+from helpers.api_key_loader import APIKeyLoader
+
+# Class to load URLs for OpenWeather and Google Air Quality APIs
 class URLLoader:
+    
+    # Function to load the OpenWeather API URL
     @staticmethod
-    def load_url(lat: float, lon: float, api_key: str, isHistory: bool, timestamp: int) -> str:
+    def load_openweather_url(lat: float, lon: float, isHistory: bool, timestamp: int) -> str:
         count = 10
+        api_key = APIKeyLoader.load_openweather_api_key()
         if isHistory:
             return f"https://api.openweathermap.org/data/4.0/onecall/timeline/1day?cnt={count}&lat={lat}&lon={lon}&start={timestamp}&appid={api_key}"
         else:
             return f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={api_key}"
+
+
+    # Function to load the Google Air Quality API URL
+    @staticmethod
+    def load_airquality_url():
+        api_key = APIKeyLoader.load_google_cloud_api_key()
+        return f"https://airquality.googleapis.com/v1/currentConditions:lookup?key={api_key}"
