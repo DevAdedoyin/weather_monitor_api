@@ -1,8 +1,7 @@
 
-
-
+from tools.weather.air_quality.air_quality import AirQualityTool
 from tools.weather.historic_weather_search.historic_weather_search import HistoricWeatherSearchTool
-from tools.weather.generic_weather_query.generic_weather_query import GenericWeatherQuery
+from tools.weather.generic_weather_query.generic_weather_query import GenericWeatherQueryTool
 from helpers.prompt_loader import PromptLoader
 from helpers.tools_selector import ToolSelector
 from tools.weather.location_search.location_search import LocationSearchWeatherTool
@@ -18,8 +17,9 @@ class WeatherChat:
 
         tools = [
             {"type": "function", "function": LocationSearchWeatherTool.location_search_tool()},
-            {"type": "function", "function": GenericWeatherQuery.generic_weather_query_tool()},
+            {"type": "function", "function": GenericWeatherQueryTool.generic_weather_query_tool()},
             {"type": "function", "function": HistoricWeatherSearchTool.historic_weather_search_tool()},
+            {"type": "function", "function": AirQualityTool.get_air_quality_tool()},
         ]
         messages = [
                 {

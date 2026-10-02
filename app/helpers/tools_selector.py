@@ -2,7 +2,8 @@
 
 
 import json
-from data.weather_data import WeatherData
+from utility_data.air_quality_data import AirQualityData
+from utility_data.weather_data import WeatherData
 from helpers.location_searcher import LocationSearcher
 from datetime import datetime, timezone
 
@@ -24,9 +25,9 @@ class ToolSelector:
                 print(f"ToolSelector: Calling tool {tool_name} with arguments: {tool_call.function.arguments}")
                 location = json.loads(tool_call.function.arguments)["location"]
                 timestamp = json.loads(tool_call.function.arguments)["timestamp"]
-                print(f"REQUESTED TimeStamp {timestamp}")
+                # print(f"REQUESTED TimeStamp {timestamp}")
                 latlng = await LocationSearcher.search_location_for_weather(location=location)
-                open_weather_response = WeatherData.get_weather_data(lat=latlng["lat"], lon=latlng["lon"], isHistory=True, timestamp=timestamp)
+                open_weather_response = WeatherData.get_weather_data(lat=latlng["lat"], lon=latlng["lon"], isHistory=True, location=location, timestamp=timestamp)
                 responses.append({"role": "tool", "content": json.dumps(open_weather_response), "tool_call_id": tool_call.id})
 
             elif tool_name == "location_search":
@@ -35,15 +36,15 @@ class ToolSelector:
                 location = json.loads(tool_call.function.arguments)["location"]
                 # timestamp: int = int(datetime.now(timezone.utc).timestamp())
                 latlng = await LocationSearcher.search_location_for_weather(location=location)
-                open_weather_response = WeatherData.get_weather_data(lat=latlng["lat"], lon=latlng["lon"], isHistory=False)
+                open_weather_response = WeatherData.get_weather_data(lat=latlng["lat"], lon=latlng["lon"], isHistory=False, location=location)
                 responses.append({"role": "tool", "content": json.dumps(open_weather_response), "tool_call_id": tool_call.id})
 
             elif tool_name == "air_quality_search":
                 """This tool is used to search for air quality information based on a location name."""
                 print(f"ToolSelector: Calling tool {tool_name} with arguments: {tool_call.function.arguments}")
                 location = json.loads(tool_call.function.arguments)["location"]
-                # timestamp: int = int(datetime.now(timezone.utc).timestamp())
-                air_quality_response = LocationSearcher.search_air_quality_for_location(location=location)
+                latlng = await LocationSearcher.search_location_for_weather(location=location)
+                air_quality_response = AirQualityData.get_air_quality_data(location=location, lat=latlng["lat"], lon=latlng["lon"])
                 responses.append({"role": "tool", "content": json.dumps(air_quality_response), "tool_call_id": tool_call.id})
 
             elif tool_name == "general_weather_query":
