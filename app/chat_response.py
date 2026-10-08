@@ -1,5 +1,5 @@
 
-from tools.weather.air_quality.air_quality import AirQualityTool
+from app.tools.air_quality.air_quality import AirQualityTool
 from tools.weather.historic_weather_search.historic_weather_search import HistoricWeatherSearchTool
 from tools.weather.generic_weather_query.generic_weather_query import GenericWeatherQueryTool
 from helpers.prompt_loader import PromptLoader
@@ -17,9 +17,17 @@ class WeatherChat:
 
         tools = [
             {"type": "function", "function": LocationSearchWeatherTool.location_search_tool()},
-            {"type": "function", "function": GenericWeatherQueryTool.generic_weather_query_tool()},
             {"type": "function", "function": HistoricWeatherSearchTool.historic_weather_search_tool()},
             {"type": "function", "function": AirQualityTool.get_air_quality_tool()},
+            {
+                "type": "web_search",
+                "search_context_size": "medium",
+                "search_content_types": ["image", "text"],
+                "image_settings": {
+                    "max_results": 3,
+                    "caption": True,
+                },
+            }
         ]
         messages = [
                 {
@@ -32,21 +40,37 @@ class WeatherChat:
                 },
             ]
 
-        openai_response = openai_client.chat.completions.create(
+        openai_response = openai_client.response.create(
             model=ModelConst.model(),
-            messages=messages,
+            input=messages,
             tools=tools,
-            #    reasoning_effort= "medium",
+            include=["web_search_call.results"],
         )
 
-        if openai_response.choices[0].finish_reason == "tool_calls":
-            message = openai_response.choices[0].message
+        tool_call_response = await ToolSelector.get_tool(openai_response)
 
-            tool_call_response = await ToolSelector.get_tool(message)
-            messages.append(message)
-            messages.extend(tool_call_response)
-            response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
+        print(f"Tool call response: {tool_call_response}")
 
-            return response.choices[0].message.content
-        else:
-            return openai_response.choices[0].message.content
+        response = openai_client.response.create(
+            model=ModelConst.model(),
+            input=tool_call_response,
+            tools=tools,
+            include=["web_search_call.results"],
+        )
+
+        print(response.model_dump_json(indent=2))
+
+        print("\n" + response.output_text)
+        return response.output_text
+
+        # if openai_response.choices[0].finish_reason == "tool_calls":
+        #     message = openai_response.choices[0].message
+
+        #     tool_call_response = await ToolSelector.get_tool(message)
+        #     messages.append(message)
+        #     messages.extend(tool_call_response)
+        #     response = openai_client.chat.completions.create(model=ModelConst.model(), messages=messages)
+
+        #     return response.choices[0].message.content
+        # else:
+        #     return openai_response.choices[0].message.content
