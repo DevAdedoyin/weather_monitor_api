@@ -14,7 +14,7 @@ class ToolSelector:
     async def get_tool(message):
         responses = []
         """Select the appropriate tool based on the message content."""
-        print(f"ToolSelector: Received message: {message}")
+        # print(f"ToolSelector: Received message: {message}")
         for tool_call in message.output:
 
              # Ignore reasoning, message, web search, etc.
@@ -89,7 +89,28 @@ class ToolSelector:
                     )
 
                     air_quality_response = (
-                        AirQualityData.get_air_quality_data(
+                        await AirQualityData.get_air_quality_data(
+                            location=location,
+                            lat=latlng["lat"],
+                            lon=latlng["lon"]
+                        )
+                    )
+
+                    responses.append({
+                        "type": "function_call_output",
+                        "call_id": tool_call.call_id,
+                        "output": json.dumps(air_quality_response)
+                    })
+
+                elif tool_name == "historical":
+                    location = arguments["location"]
+
+                    latlng = await LocationSearcher.search_location_for_weather(
+                        location=location
+                    )
+
+                    air_quality_response = (
+                        await AirQualityData.get_historical_air_quality_data(
                             location=location,
                             lat=latlng["lat"],
                             lon=latlng["lon"]

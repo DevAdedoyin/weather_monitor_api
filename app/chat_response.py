@@ -38,7 +38,7 @@ class WeatherChat:
 
         tool_call_response = await ToolSelector.get_tool(openai_response)
 
-        print(f"Tool call response: {tool_call_response}")
+        # print(f"Tool call response: {tool_call_response}")
 
         response = openai_client.responses.create(
             model=ModelConst.model(),
@@ -48,7 +48,7 @@ class WeatherChat:
             include=["web_search_call.results"],
         )
 
-        print(response.model_dump_json(indent=2))
+        # print(response.model_dump_json(indent=2))
 
         print("\n" + response.output_text)
         return response.output_text

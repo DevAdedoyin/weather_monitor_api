@@ -24,6 +24,31 @@ class AirQualityTool:
                         "required": ["location"],
                         "additionalProperties": False
                     },
+                },
+                {
+                    "type": "function",
+                    "name": "historical",
+                    "description": (
+                        "Get historical hourly air quality for a location. "
+                        "Historical data is available only for dates within the past 30 days."
+                    ),
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string"
+                            },
+                            # "timestamp": {
+                            #     "type": "integer",
+                            #     "description": (
+                            #         "Unix timestamp for the requested date and time. "
+                            #         "The requested time must be within the past 30 days."
+                            #     )
+                            # }
+                        },
+                        "required": ["location"],
+                        "additionalProperties": False
+                    }
                 }
             ]
         }
