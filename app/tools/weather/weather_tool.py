@@ -6,13 +6,14 @@ class WeatherTool:
     @staticmethod
     def get_weather_tool():
 
-        {
+        return {
             "type": "namespace",
             "name": "weather",
             "description": "Weather tools for current, forecast, and historical weather information.",
             "tools": [
 
                 {
+                    "type": "function",
                     "name": "current",
                     "description": "Search for current weather information based on a location name.",
                     "parameters": {
@@ -29,6 +30,7 @@ class WeatherTool:
                 },
 
                 {
+                    "type": "function",
                     "name": "historical",
                     "description": "Search for historic weather information based on a location name and time.",
                     "strict": True,

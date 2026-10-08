@@ -17,6 +17,10 @@ class ToolSelector:
         print(f"ToolSelector: Received message: {message}")
         for tool_call in message.output:
 
+             # Ignore reasoning, message, web search, etc.
+            if tool_call.type != "function_call":
+                continue
+
             namespace = tool_call.namespace
             tool_name = tool_call.name
             arguments = json.loads(tool_call.arguments)
@@ -77,7 +81,7 @@ class ToolSelector:
             # AIR QUALITY NAMESPACE
             elif namespace == "air_quality":
 
-                if tool_name == "current":
+                if tool_name == "current_air_quality":
                     location = arguments["location"]
 
                     latlng = await LocationSearcher.search_location_for_weather(

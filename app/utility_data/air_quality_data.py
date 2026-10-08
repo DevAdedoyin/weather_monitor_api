@@ -40,13 +40,25 @@ class AirQualityData:
         response = httpx.post(
             url,
             json=data,
-            timeout=10
+            timeout=10,
+            headers={ "Content-Type": "application/json" }
         )
+
+        if response.status_code == 400:
+            data = response.json()
+
+            if data.get("error", {}).get("message") == (
+                "Information is unavailable for this location. Please try a different location."
+                ):
+                return {
+                    "available": False,
+                    "message": "Air quality information is unavailable for this location."
+                }
 
         response.raise_for_status()
 
         results = response.json()
 
-        if not results:
-            raise LookupError(f"No air quality data found for location: {location}")
+        # if not results:
+        #     raise LookupError(f"No air quality data found for location: {location}")
         return results

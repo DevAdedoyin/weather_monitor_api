@@ -9,4 +9,4 @@ class ModelConst:
         gpt4 = "gpt-4.1"
         gpt5 = "gpt-5.5"
         gpt_6_astra = "gpt-6-astra"
-        return gpt5
+        return gpt_6_astra

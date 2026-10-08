@@ -5,17 +5,25 @@ class AirQualityTool:
 
         # Function to define the tool for searching air quality information based on a location name
         return {
-            "name": "air_quality_search",
-            "description": "Search for air quality information based on a location name.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "location": {
-                        "type": "string",
-                        "description": "The name of the location to search for air quality information.",
-                    }
-                },
-                "required": ["location"],
-                "additionalProperties": False
-            },
+            "type": "namespace",
+            "name": "air_quality",
+            "description": "Air quality tools for air quality information.",
+            "tools": [
+                {
+                    "type": "function",
+                    "name": "current_air_quality",
+                    "description": "Search for current air quality information based on a location name.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The name of the location to search for air quality information.",
+                            }
+                        },
+                        "required": ["location"],
+                        "additionalProperties": False
+                    },
+                }
+            ]
         }
