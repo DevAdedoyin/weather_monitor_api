@@ -31,27 +31,28 @@ class AirQualityData:
 
         url = URLLoader.load_airquality_url()
 
-        response = httpx.post(
-            url,
-            json=data,
-            timeout=10,
-            headers={ "Content-Type": "application/json" }
-        )
+        try:
+            response = httpx.post(
+                url,
+                json=data,
+                timeout=10,
+                headers={ "Content-Type": "application/json" }
+            )
 
-        if response.status_code == 400:
-            data = response.json()
+            if response.status_code == 400:
+                data = response.json()
 
-            if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
-                return {
-                    "available": False,
-                    "message": data.get("error", {}).get("message")
-                }
+                if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
+                    return {
+                        "available": False,
+                        "message": data.get("error", {}).get("message")
+                    }
 
-        response.raise_for_status()
-
-        results = response.json()
-
-        return results
+            response.raise_for_status()
+            results = response.json()
+            return results
+        except httpx.HTTPError as exc:
+            raise RuntimeError(f"Failed to fetch current air quality data for '{location}': {exc}") from exc
 
 
     @staticmethod
@@ -69,34 +70,35 @@ class AirQualityData:
 
         url = URLLoader.load_airquality_url(urlType="historical")
 
-        response = httpx.post(
-                    url,
-                    json=payload,
-                    timeout=10,
-                    headers={ "Content-Type": "application/json" }
-                )
+        try:
+            response = httpx.post(
+                        url,
+                        json=payload,
+                        timeout=10,
+                        headers={ "Content-Type": "application/json" }
+                    )
 
-        if response.status_code == 400:
-            data = response.json()
+            if response.status_code == 400:
+                data = response.json()
 
-            if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
-                return {
-                    "available": False,
-                    "message": data.get("error", {}).get("message")
-                }
+                if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
+                    return {
+                        "available": False,
+                        "message": data.get("error", {}).get("message")
+                    }
 
-        response.raise_for_status()
-
-        results = response.json()
-
-        return results
+            response.raise_for_status()
+            results = response.json()
+            return results
+        except httpx.HTTPError as exc:
+            raise RuntimeError(f"Failed to fetch historical air quality data for '{location}': {exc}") from exc
 
 
     @staticmethod
     async def get_forecast_air_quality_data(location: str, lat: float, lon: float, timestamp: str):
         """This function retrieves forecast air quality data for a given location and timestamp.
         It constructs a payload with the location coordinates and the specified timestamp."""
-        
+
         payload = {
                     "pageSize": "10",
                     "universalAqi": "true",
@@ -116,25 +118,26 @@ class AirQualityData:
 
         url = URLLoader.load_airquality_url(urlType="forecast")
 
-        response = httpx.post(
-                    url,
-                    json=payload,
-                    timeout=10,
-                    headers={ "Content-Type": "application/json" }
-                )
+        try:
+            response = httpx.post(
+                        url,
+                        json=payload,
+                        timeout=10,
+                        headers={ "Content-Type": "application/json" }
+                    )
 
-        if response.status_code == 400:
-            data = response.json()
+            if response.status_code == 400:
+                data = response.json()
 
-            if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
-                return {
-                    "available": False,
-                    "message": data.get("error", {}).get("message")
-                }
+                if data.get("error", {}).get("status") == "INVALID_ARGUMENT":
+                    return {
+                        "available": False,
+                        "message": data.get("error", {}).get("message")
+                    }
 
-        response.raise_for_status()
-
-        results = response.json()
-
-        return results
+            response.raise_for_status()
+            results = response.json()
+            return results
+        except httpx.HTTPError as exc:
+            raise RuntimeError(f"Failed to fetch forecast air quality data for '{location}': {exc}") from exc
 
