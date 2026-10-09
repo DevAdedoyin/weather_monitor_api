@@ -23,11 +23,9 @@ class URLLoader:
         api_key = APIKeyLoader.load_google_cloud_api_key()
 
         if urlType == "historical":
-            print(f"URLLOADER: Calling historical air quality URL with API key: {api_key}")
             return f"https://airquality.googleapis.com/v1/history:lookup?key={api_key}"
+
         elif urlType == "forecast":
-            print(f"URLLOADER: Calling forecast air quality URL with API key: {api_key}")
             return f"https://airquality.googleapis.com/v1/forecast:lookup?key={api_key}"
 
-        print(f"URLLOADER: Calling current air quality URL with API key: {api_key}")
         return f"https://airquality.googleapis.com/v1/currentConditions:lookup?key={api_key}"

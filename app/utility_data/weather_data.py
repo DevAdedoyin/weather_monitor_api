@@ -9,7 +9,8 @@ class WeatherData:
 
     @staticmethod
     def get_weather_data(lat: float, lon: float, isHistory: bool, location: str, timestamp: int | None = None):
-        # Weather API to get weather information
+        """This function retrieves weather data for a given location and timestamp."""
+        
         url = URLLoader.load_openweather_url(lat, lon, isHistory=isHistory, timestamp=timestamp)
 
         print(f"Calling URL: {url}")

@@ -25,8 +25,8 @@ class ToolSelector:
             tool_name = tool_call.name
             arguments = json.loads(tool_call.arguments)
 
-            # if statement to select the appropriate tool based on the tool name
 
+            # if statement to select the appropriate tool based on the tool name
             # WEATHER NAMESPACE
             if namespace == "weather":
 
@@ -77,7 +77,7 @@ class ToolSelector:
                         f"Unknown weather tool: {tool_name}"
                     )
 
-
+            # elif statement to select the air quality tool 
             # AIR QUALITY NAMESPACE
             elif namespace == "air_quality":
 
@@ -114,6 +114,29 @@ class ToolSelector:
                             location=location,
                             lat=latlng["lat"],
                             lon=latlng["lon"]
+                        )
+                    )
+
+                    responses.append({
+                        "type": "function_call_output",
+                        "call_id": tool_call.call_id,
+                        "output": json.dumps(air_quality_response)
+                    })
+
+                elif tool_name == "forecast":
+                    location = arguments["location"]
+                    timestamp = arguments["timestamp"]
+
+                    latlng = await LocationSearcher.search_location_for_weather(
+                        location=location
+                    )
+
+                    air_quality_response = (
+                        await AirQualityData.get_forecast_air_quality_data(
+                            location=location,
+                            lat=latlng["lat"],
+                            lon=latlng["lon"],
+                            timestamp=timestamp
                         )
                     )
 

@@ -6,6 +6,8 @@ class WeatherTool:
     @staticmethod
     def get_weather_tool():
 
+        # Provide the model with the available weather actions and required parameters so it can
+        # decide whether to request current, historical, or forecast information.
         return {
             "type": "namespace",
             "name": "weather",
