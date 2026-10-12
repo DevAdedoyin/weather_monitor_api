@@ -60,3 +60,8 @@ async def get_user_prompt(user_prompt: str, lat: float, lon: float, current_loca
         "model": response.model,
         "created_at": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
     }
+
+@app.post("/api/users")
+async def create_user(user_data: dict):
+    
+    return {"message": "User created successfully", "user_data": user_data}

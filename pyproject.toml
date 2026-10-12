@@ -9,4 +9,5 @@ dependencies = [
     "ipython>=9.17.1",
     "openai>=3.19.2",
     "pydantic>=2.13.5",
+    "sqlalchemy>=2.1.4",
 ]
