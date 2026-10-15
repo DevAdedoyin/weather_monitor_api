@@ -93,3 +93,22 @@ def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(g
     db.refresh(new_user_chat)
 
     return new_user_chat
+
+
+"""This endpoint retrieves a user chat session from the database based on the provided user_chat_id"""
+@app.get("/api/user_chats/{user_chat_id}", response_model=UserChatResponse)
+def get_user_chat(user_chat_id: str, db: Annotated[Session, Depends(get_db)]):
+    result = db.execute(
+        select(models.UserChat).where(models.UserChat.user_chat_id == user_chat_id),
+    )
+
+    user_chat = result.scalars().first()
+
+    if not user_chat:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User chat session not found",
+        )
+
+    return user_chat
+
