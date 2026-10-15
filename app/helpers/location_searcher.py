@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from dotenv import load_dotenv
 from geopy import location
 from geopy.geocoders import Nominatim
-from helpers.url_loader import URLLoader
+from app.helpers.url_loader import URLLoader
 
 
 class LocationSearcher:

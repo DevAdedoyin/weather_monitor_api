@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from helpers.api_key_loader import APIKeyLoader
+from app.helpers.api_key_loader import APIKeyLoader
 
 # Class to load URLs for OpenWeather and Google Air Quality APIs
 class URLLoader:

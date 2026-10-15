@@ -3,7 +3,7 @@ import json
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from helpers.url_loader import URLLoader
+from app.helpers.url_loader import URLLoader
 
 
 class WeatherData:

@@ -2,9 +2,9 @@
 
 
 import json
-from utility_data.air_quality_data import AirQualityData
-from utility_data.weather_data import WeatherData
-from helpers.location_searcher import LocationSearcher
+from app.utility_data.air_quality_data import AirQualityData
+from app.utility_data.weather_data import WeatherData
+from app.helpers.location_searcher import LocationSearcher
 
 
 class ToolSelector:

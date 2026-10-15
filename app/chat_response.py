@@ -1,11 +1,11 @@
 
-from tools.air_quality.air_quality import AirQualityTool
-from tools.weather.weather_tool import WeatherTool
-from helpers.prompt_loader import PromptLoader
-from helpers.tools_selector import ToolSelector
-from helpers.openai_loader import OpenAILoader
-from helpers.model import ModelConst
-from constants.system_prompt_constants import SystemPrompt
+from app.tools.air_quality.air_quality import AirQualityTool
+from app.tools.weather.weather_tool import WeatherTool
+from app.helpers.prompt_loader import PromptLoader
+from app.helpers.tools_selector import ToolSelector
+from app.helpers.openai_loader import OpenAILoader
+from app.helpers.model import ModelConst
+from app.constants.system_prompt_constants import SystemPrompt
 
 
 class WeatherChat:

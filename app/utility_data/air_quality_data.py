@@ -1,6 +1,6 @@
 
 import httpx
-from helpers.url_loader import URLLoader
+from app.helpers.url_loader import URLLoader
 from datetime import datetime, timezone
 
 
