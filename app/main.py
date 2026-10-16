@@ -52,26 +52,6 @@ async def generic_exception_handler(_, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": f"An unexpected error occurred: {exc}"})
 
 
-""" Create an empty chat session in the database and return the created session details. """
-@app.post(
-    "/api/user_chats",
-    response_model=UserChatResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(database.get_db)],):
-
-    new_user_chat = models.UserChat(
-        user_chat_id=str(uuid4()),
-        is_authenticated=user_chat.is_authenticated,
-    )
-
-    db.add(new_user_chat)
-    db.commit()
-    db.refresh(new_user_chat)
-
-    return new_user_chat
-
-
 """This endpoint creates a new user chat session in the database and returns the created session details."""
 @app.post("/api/user_chats", response_model=UserChatResponse, status_code=status.HTTP_201_CREATED)
 def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(database.get_db)]):
@@ -81,12 +61,13 @@ def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(d
 
     existing_user_chat = result.scalars().first()
 
+    print(f"Existing user chat: {existing_user_chat}")
     if existing_user_chat:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User chat session already exists",
         )
-
+    
     new_user_chat = models.UserChat(
         user_chat_id=user_chat.user_chat_id,
         created_at=user_chat.created_at,
@@ -97,8 +78,7 @@ def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(d
             content=msg.content,
         )
         for msg in user_chat.chat_history
-    ],
-)
+    ],)
 
     db.add(new_user_chat)
     db.commit()
@@ -211,9 +191,7 @@ async def send_chat_message(user_chat_id: str, message: ChatMessageCreate, lat: 
 
 """Retrieve a session and its complete message history"""
 @app.get("/api/user_chats/{user_chat_id}", response_model=UserChatResponse,)
-def get_user_chat(
-    user_chat_id: str,
-    db: Annotated[Session, Depends(database.get_db)],):
+def get_user_chat(user_chat_id: str, db: Annotated[Session, Depends(database.get_db)],):
 
     user_chat = db.execute(
         select(models.UserChat).where(
