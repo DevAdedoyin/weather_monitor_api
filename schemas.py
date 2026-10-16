@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class ChatMessageResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    # id: int
+    id: int
     role: str
     content: str
     created_at: datetime
@@ -29,9 +29,7 @@ class ChatMessageCreate(BaseModel):
 class UserChatResponse(UserChatBase):
     model_config = ConfigDict(from_attributes=True)
 
-    # user_chat_id: str
-    # created_at: datetime
-    # is_authenticated: bool
-    # messages: list[ChatMessageResponse] = Field(default_factory=list)
     last_used: datetime
+    chat_history: list[ChatMessageResponse] = Field(default_factory=list, validation_alias="messages",)
+
 

@@ -55,19 +55,20 @@ async def generic_exception_handler(_, exc: Exception):
 """This endpoint creates a new user chat session in the database and returns the created session details."""
 @app.post("/api/user_chats", response_model=UserChatResponse, status_code=status.HTTP_201_CREATED)
 def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(database.get_db)]):
+
     result = db.execute(
         select(models.UserChat).where(models.UserChat.user_chat_id == user_chat.user_chat_id),
     )
 
     existing_user_chat = result.scalars().first()
 
-    print(f"Existing user chat: {existing_user_chat}")
+    # print(f"Existing user chat: {existing_user_chat}")
     if existing_user_chat:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User chat session already exists",
         )
-    
+
     new_user_chat = models.UserChat(
         user_chat_id=user_chat.user_chat_id,
         created_at=user_chat.created_at,
@@ -85,24 +86,6 @@ def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(d
     db.refresh(new_user_chat)
 
     return new_user_chat
-
-
-"""This endpoint retrieves a user chat session from the database based on the provided user_chat_id"""
-@app.get("/api/user_chats/{user_chat_id}", response_model=UserChatResponse)
-def get_user_chat(user_chat_id: str, db: Annotated[Session, Depends(database.get_db)]):
-    result = db.execute(
-        select(models.UserChat).where(models.UserChat.user_chat_id == user_chat_id),
-    )
-
-    user_chat = result.scalars().first()
-
-    if not user_chat:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User chat session not found",
-        )
-
-    return user_chat
 
 
 """Add a message and generate the weather response"""
@@ -194,9 +177,9 @@ async def send_chat_message(user_chat_id: str, message: ChatMessageCreate, lat: 
 def get_user_chat(user_chat_id: str, db: Annotated[Session, Depends(database.get_db)],):
 
     user_chat = db.execute(
-        select(models.UserChat).where(
-            models.UserChat.user_chat_id == user_chat_id
-        )
+        select(models.UserChat)
+        .options(selectinload(models.UserChat.messages))
+        .where(models.UserChat.user_chat_id == user_chat_id)
     ).scalars().first()
 
     if user_chat is None:
