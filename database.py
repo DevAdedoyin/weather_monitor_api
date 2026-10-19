@@ -12,7 +12,7 @@ engine = create_engine(
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-print("Database file:", Path(engine.url.database).resolve())
+# print("Database file:", Path(engine.url.database).resolve())
 
 class Base(DeclarativeBase):
     pass

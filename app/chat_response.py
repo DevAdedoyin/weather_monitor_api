@@ -13,7 +13,7 @@ class WeatherChat:
     # configured tool definitions, and then executes any relevant weather/air-quality tool.
     async def weather_chatter(user_prompt :str, lat: float, lon: float, location: str, date: str, chat_history: list):
 
-        print(f"Chat History: {chat_history}")
+        print(f"Chat History: {chat_history[-10:]}")
         try:
             openai_client = OpenAILoader.openai_loader()
 
@@ -27,7 +27,7 @@ class WeatherChat:
             # The first prompt contains the user query plus contextual location metadata.
             system_prompt = [ {"role": "system", "content": SystemPrompt.get_system_prompt(),},]
             current_user_prompt = [{"role": "user", "content": PromptLoader.load_prompt(user_prompt, lat=lat, lon=lon, location=location, date=date),},]
-            messages = system_prompt + chat_history + current_user_prompt
+            messages = system_prompt + chat_history[-10:] + current_user_prompt
 
             # Initial model call decides if a tool is required to answer the question.
             openai_response = openai_client.responses.create(
@@ -49,7 +49,7 @@ class WeatherChat:
             )
 
             print("\n" + response.output_text)
-            print("CHAT RESPONSE: " + str(response))
+            # print("CHAT RESPONSE: " + str(response))
             return response
         except (ValueError, RuntimeError, LookupError, OSError, ConnectionError, TimeoutError) as exc:
             raise RuntimeError(f"Failed to generate a weather response for '{location}': {exc}") from exc

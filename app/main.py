@@ -53,7 +53,7 @@ async def generic_exception_handler(_, exc: Exception):
 
 
 """This endpoint creates a new user chat session in the database and returns the created session details."""
-@app.post("/api/user_chats", response_model=UserChatResponse, status_code=status.HTTP_201_CREATED)
+@app.post("/api/v1/user_chats", response_model=UserChatResponse, status_code=status.HTTP_201_CREATED)
 def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(database.get_db)]):
 
     result = db.execute(
@@ -89,7 +89,7 @@ def create_user_chat(user_chat: UserChatCreate, db: Annotated[Session, Depends(d
 
 
 """Add a message and generate the weather response"""
-@app.post("/api/user_chats/{user_chat_id}/messages")
+@app.post("/api/v1/user_chats/{user_chat_id}/messages")
 async def send_chat_message(user_chat_id: str, message: ChatMessageCreate, lat: float, lon: float, current_location: str,
     db: Annotated[Session, Depends(database.get_db)],):
 
@@ -173,7 +173,7 @@ async def send_chat_message(user_chat_id: str, message: ChatMessageCreate, lat: 
 
 
 """Retrieve a session and its complete message history"""
-@app.get("/api/user_chats/{user_chat_id}", response_model=UserChatResponse,)
+@app.get("/api/v1/user_chats/{user_chat_id}", response_model=UserChatResponse,)
 def get_user_chat(user_chat_id: str, db: Annotated[Session, Depends(database.get_db)],):
 
     user_chat = db.execute(
