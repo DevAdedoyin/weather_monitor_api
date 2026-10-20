@@ -19,11 +19,16 @@ from schemas import (
     ChatMessageCreate,
     ChatMessageResponse,
 )
+from scheduler import start_scheduler, stop_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     database.Base.metadata.create_all(bind=database.engine)
-    yield
+    start_scheduler()
+    try:
+        yield
+    finally:
+        stop_scheduler()
 
 app = FastAPI(lifespan=lifespan)
 
