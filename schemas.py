@@ -7,8 +7,8 @@ class ChatMessageResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    role: str
-    content: str
+    role: str = Field(default="user", min_length=1, max_length=20)
+    content: str = Field(default="User's message", min_length=1)
     created_at: datetime
 
 class UserChatBase(BaseModel):
