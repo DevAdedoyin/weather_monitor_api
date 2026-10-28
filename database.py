@@ -3,11 +3,12 @@ from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
+from config import settings
+
 SQLALCHEMY_DATABASE_URL = "sqlite:///./weather.db"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    settings.database_url
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
